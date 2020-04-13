@@ -5,6 +5,7 @@ import { AlbersUsa } from "@vx/geo";
 import { withTooltip, TooltipWithBounds } from "@vx/tooltip";
 import { scaleSqrt } from "@vx/scale";
 import Circles from "./Circles";
+import StateBoundaries from "./StateBoundaries";
 
 // Topology
 const topology = require("../Assets/counties-simplified.json"); // Processed with toposimplify; added NYC with fips=-1
@@ -154,38 +155,16 @@ class DataMap extends React.Component {
             }}
           </AlbersUsa>
 
-          {/* For counties data, draw bold states boundaries, and use circles to represent data. */}
+          {/* For counties data, draw bold state boundaries, and use circles to represent data. */}
           {this.currentTopology === countiesTopology && (
             <React.Fragment>
-              {/* Bold states boundaries */}
-              <AlbersUsa
-                data={statesTopology.features} // Not to be confused with our COVID-19 data. This is actually topology.
-                scale={mapScale}
-                translate={[mapCenterX, mapCenterY]}
-              >
-                {(data) => {
-                  return (
-                    <g>
-                      {data.features.map((feature, i) => {
-                        const { feature: f } = feature;
-                        return (
-                          <path
-                            key={`map-feature-${i}`}
-                            d={data.path(f)}
-                            fill="none"
-                            stroke={mapStrokeColor}
-                            strokeWidth={0.5}
-                            style={{
-                              pointerEvents: "none", // Don't block mouse events
-                            }}
-                          />
-                        );
-                      })}
-                    </g>
-                  );
-                }}
-              </AlbersUsa>
-
+              <StateBoundaries
+                topology={statesTopology.features}
+                mapCenterX={mapCenterX}
+                mapCenterY={mapCenterY}
+                mapScale={mapScale}
+                mapStrokeColor={mapStrokeColor}
+              />
               <Circles
                 data={latestCountiesData}
                 topology={countiesTopology.features}
