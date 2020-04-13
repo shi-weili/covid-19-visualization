@@ -2,13 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import * as topojson from "topojson-client";
 import { AlbersUsa } from "@vx/geo";
-import { Circle } from "@vx/shape";
 import { withTooltip, TooltipWithBounds } from "@vx/tooltip";
 import { scaleSqrt } from "@vx/scale";
-import { Container } from "react-bootstrap";
+import Circles from "./Circles";
 
 // Topology
-const topology = require("../Assets/counties-simplified.json"); // Processed with toposimplify
+const topology = require("../Assets/counties-simplified.json"); // Processed with toposimplify; added NYC with fips=-1
 
 const statesTopology = topojson.feature(topology, topology.objects.states);
 const countiesTopology = topojson.feature(topology, topology.objects.counties);
@@ -36,11 +35,6 @@ const mapScale = mapHeight * 1.8;
 
 const mapStrokeColor = "#ffffff";
 const defaultMapColor = "silver";
-const circleFillColorForCases = "#ff000022";
-const circleStrokeColorForCases = "#88000088";
-const circleFillColorForDeaths = "#80000022";
-const circleStrokeColorForDeaths = "#60000088";
-const circlesMaxRadius = 80;
 
 const stateCasesColor = scaleSqrt({
   domain: [0, maxStateCases],
@@ -50,16 +44,6 @@ const stateCasesColor = scaleSqrt({
 const stateDeathsColor = scaleSqrt({
   domain: [0, maxStateDeaths],
   range: [defaultMapColor, "maroon"],
-});
-
-const countyCasesRadius = scaleSqrt({
-  domain: [0, maxCountyCases],
-  range: [0, circlesMaxRadius],
-});
-
-const countyDeathsRadius = scaleSqrt({
-  domain: [0, maxCountyDeaths],
-  range: [0, circlesMaxRadius],
 });
 
 class DataMap extends React.Component {
@@ -76,8 +60,6 @@ class DataMap extends React.Component {
   currentTopology = statesTopology;
   currentData = latestStatesData;
   currentStateFillColor = stateCasesColor;
-  currentCircleFillColor = circleFillColorForCases;
-  currentCircleStrokeColor = circleStrokeColorForCases;
 
   updateState() {
     this.currentTopology =
@@ -86,14 +68,6 @@ class DataMap extends React.Component {
       this.props.dataScale == "states" ? latestStatesData : latestCountiesData;
     this.currentStateFillColor =
       this.props.dataType == "cases" ? stateCasesColor : stateDeathsColor;
-    this.currentCircleFillColor =
-      this.props.dataType == "cases"
-        ? circleFillColorForCases
-        : circleFillColorForDeaths;
-    this.currentCircleStrokeColor =
-      this.props.dataType == "cases"
-        ? circleStrokeColorForCases
-        : circleStrokeColorForDeaths;
   }
 
   render() {
@@ -105,178 +79,138 @@ class DataMap extends React.Component {
     return (
       <React.Fragment>
         {/* Map */}
-        <Container>
-          <svg width={mapWidth} height={mapHeight}>
-            {/* States or counties shapes */}
-            <AlbersUsa
-              data={this.currentTopology.features}
-              scale={mapScale}
-              translate={[mapCenterX, mapCenterY]}
-            >
-              {(data) => {
-                return (
-                  <g>
-                    {data.features.map((feature, i) => {
-                      const {
-                        feature: f,
-                        centroid: [cx, cy],
-                      } = feature;
-                      return (
-                        <path
-                          key={`map-feature-${i}`}
-                          d={data.path(f)}
-                          fill={
-                            this.currentTopology === statesTopology &&
-                            this.currentData[parseInt(f.id).toString()]
-                              ? this.currentStateFillColor(
-                                  this.currentData[parseInt(f.id).toString()][
+
+        <svg className="data-map-canvas" width={mapWidth} height={mapHeight}>
+          {/* States or counties shapes */}
+          <AlbersUsa
+            data={this.currentTopology.features} // Not to be confused with our COVID-19 data. This is actually topology.
+            scale={mapScale}
+            translate={[mapCenterX, mapCenterY]}
+          >
+            {(data) => {
+              return (
+                <g>
+                  {data.features.map((feature, i) => {
+                    const {
+                      feature: f,
+                      centroid: [cx, cy],
+                    } = feature;
+                    return (
+                      <path
+                        key={`map-feature-${i}`}
+                        d={data.path(f)}
+                        fill={
+                          this.currentTopology === statesTopology &&
+                          this.currentData[parseInt(f.id).toString()]
+                            ? this.currentStateFillColor(
+                                this.currentData[parseInt(f.id).toString()][
+                                  this.props.dataType
+                                ]
+                              )
+                            : defaultMapColor
+                        }
+                        stroke={mapStrokeColor}
+                        strokeWidth={
+                          this.currentTopology === statesTopology ? 0.5 : 0.25
+                        }
+                        onMouseEnter={() => {
+                          // Don't show tooltip if no data is available
+                          if (
+                            this.currentData[parseInt(f.id).toString()] == null
+                          ) {
+                            return;
+                          }
+
+                          if (
+                            this.currentData[parseInt(f.id).toString()][
+                              this.props.dataType
+                            ] == 0
+                          ) {
+                            return;
+                          }
+
+                          this.props.showTooltip({
+                            tooltipLeft: cx,
+                            tooltipTop: cy,
+                            tooltipData: `${
+                              this.currentData[parseInt(f.id).toString()][
+                                "area_name"
+                              ]
+                            }: ${
+                              this.currentData[parseInt(f.id).toString()]
+                                ? this.currentData[parseInt(f.id).toString()][
                                     this.props.dataType
                                   ]
-                                )
-                              : defaultMapColor
-                          }
-                          stroke={mapStrokeColor}
-                          strokeWidth={
-                            this.currentTopology === statesTopology ? 0.5 : 0.25
-                          }
-                          onMouseEnter={() => {
-                            // Don't show tooltip if no data is available
-                            if (
-                              this.currentData[parseInt(f.id).toString()] ==
-                              null
-                            ) {
-                              return;
-                            }
-
-                            if (
-                              this.currentData[parseInt(f.id).toString()][
-                                this.props.dataType
-                              ] == 0
-                            ) {
-                              return;
-                            }
-
-                            this.props.showTooltip({
-                              tooltipLeft: cx,
-                              tooltipTop: cy,
-                              tooltipData: `${
-                                this.currentData[parseInt(f.id).toString()][
-                                  "area_name"
-                                ]
-                              }: ${
-                                this.currentData[parseInt(f.id).toString()]
-                                  ? this.currentData[parseInt(f.id).toString()][
-                                      this.props.dataType
-                                    ]
-                                  : 0
-                              } ${this.props.dataType}`,
-                            });
-                          }}
-                          onMouseLeave={this.props.hideTooltip}
-                        />
-                      );
-                    })}
-                  </g>
-                );
-              }}
-            </AlbersUsa>
-
-            {/* For counties data, draw bold states boundaries, and use circles to represent data. */}
-            {this.currentTopology === countiesTopology && (
-              <React.Fragment>
-                {/* Bold states boundaries */}
-                <AlbersUsa
-                  data={statesTopology.features}
-                  scale={mapScale}
-                  translate={[mapCenterX, mapCenterY]}
-                >
-                  {(data) => {
-                    return (
-                      <g>
-                        {data.features.map((feature, i) => {
-                          const { feature: f } = feature;
-                          return (
-                            <path
-                              key={`map-feature-${i}`}
-                              d={data.path(f)}
-                              fill="none"
-                              stroke={mapStrokeColor}
-                              strokeWidth={0.5}
-                              style={{
-                                pointerEvents: "none", // Don't block mouse events
-                              }}
-                            />
-                          );
-                        })}
-                      </g>
+                                : 0
+                            } ${this.props.dataType}`,
+                          });
+                        }}
+                        onMouseLeave={this.props.hideTooltip}
+                      />
                     );
-                  }}
-                </AlbersUsa>
+                  })}
+                </g>
+              );
+            }}
+          </AlbersUsa>
 
-                {/* Circles */}
-                <AlbersUsa
-                  data={this.currentTopology.features}
-                  scale={mapScale}
-                  translate={[mapCenterX, mapCenterY]}
-                >
-                  {(data) => {
-                    return (
-                      <g>
-                        {data.features.map((feature, i) => {
-                          const {
-                            feature: f,
-                            centroid: [cx, cy],
-                          } = feature;
-                          return this.currentData[parseInt(f.id).toString()] ? (
-                            <Circle
-                              key={`circle-${i}`}
-                              className="circle"
-                              cx={cx}
-                              cy={cy}
-                              r={
-                                this.currentData[parseInt(f.id).toString()]
-                                  ? this.props.dataType == "cases"
-                                    ? countyCasesRadius(
-                                        this.currentData[
-                                          parseInt(f.id).toString()
-                                        ][this.props.dataType]
-                                      )
-                                    : countyDeathsRadius(
-                                        this.currentData[
-                                          parseInt(f.id).toString()
-                                        ][this.props.dataType]
-                                      )
-                                  : 0
-                              }
-                              fill={this.currentCircleFillColor}
-                              stroke={this.currentCircleStrokeColor}
-                              style={{
-                                pointerEvents: "none", // Don't block mouse events
-                              }}
-                            />
-                          ) : (
-                            <g key={`circle-${i}`} />
-                          );
-                        })}
-                      </g>
-                    );
-                  }}
-                </AlbersUsa>
-              </React.Fragment>
-            )}
-          </svg>
-          {/* Details tooltip */}
-          {this.props.tooltipOpen && (
-            <TooltipWithBounds
-              // set this to random so it correctly updates with parent bounds
-              key={Math.random()}
-              top={this.props.tooltipTop}
-              left={this.props.tooltipLeft}
-            >
-              {this.props.tooltipData}
-            </TooltipWithBounds>
+          {/* For counties data, draw bold states boundaries, and use circles to represent data. */}
+          {this.currentTopology === countiesTopology && (
+            <React.Fragment>
+              {/* Bold states boundaries */}
+              <AlbersUsa
+                data={statesTopology.features} // Not to be confused with our COVID-19 data. This is actually topology.
+                scale={mapScale}
+                translate={[mapCenterX, mapCenterY]}
+              >
+                {(data) => {
+                  return (
+                    <g>
+                      {data.features.map((feature, i) => {
+                        const { feature: f } = feature;
+                        return (
+                          <path
+                            key={`map-feature-${i}`}
+                            d={data.path(f)}
+                            fill="none"
+                            stroke={mapStrokeColor}
+                            strokeWidth={0.5}
+                            style={{
+                              pointerEvents: "none", // Don't block mouse events
+                            }}
+                          />
+                        );
+                      })}
+                    </g>
+                  );
+                }}
+              </AlbersUsa>
+
+              <Circles
+                data={latestCountiesData}
+                topology={countiesTopology.features}
+                maxCountyCases={maxCountyCases}
+                maxCountyDeaths={maxCountyDeaths}
+                dataType={this.props.dataType}
+                mapCenterX={mapCenterX}
+                mapCenterY={mapCenterY}
+                mapScale={mapScale}
+              />
+            </React.Fragment>
           )}
-        </Container>
+        </svg>
+
+        {/* Details tooltip */}
+        {this.props.tooltipOpen && (
+          <TooltipWithBounds
+            // set this to random so it correctly updates with parent bounds
+            key={Math.random()}
+            top={this.props.tooltipTop}
+            left={this.props.tooltipLeft}
+          >
+            {this.props.tooltipData}
+          </TooltipWithBounds>
+        )}
       </React.Fragment>
     );
   }
