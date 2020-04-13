@@ -14,7 +14,7 @@ const circlesMaxRadius = 80;
 class Circles extends React.Component {
   // Props
   static propTypes = {
-    data: PropTypes.array.isRequired,
+    data: PropTypes.object.isRequired,
     topology: PropTypes.array.isRequired,
     dataType: PropTypes.string.isRequired,
     maxCountyCases: PropTypes.number.isRequired,
