@@ -16,9 +16,9 @@ class Circles extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     topology: PropTypes.array.isRequired,
+    dataType: PropTypes.string.isRequired,
     maxCountyCases: PropTypes.number.isRequired,
     maxCountyDeaths: PropTypes.number.isRequired,
-    dataType: PropTypes.string.isRequired,
     mapCenterX: PropTypes.number.isRequired,
     mapCenterY: PropTypes.number.isRequired,
     mapScale: PropTypes.number.isRequired,
@@ -30,11 +30,11 @@ class Circles extends React.Component {
 
   updateState() {
     this.currentCircleFillColor =
-      this.props.dataType == "cases"
+      this.props.dataType === "cases"
         ? circleFillColorForCases
         : circleFillColorForDeaths;
     this.currentCircleStrokeColor =
-      this.props.dataType == "cases"
+      this.props.dataType === "cases"
         ? circleStrokeColorForCases
         : circleStrokeColorForDeaths;
   }
@@ -84,7 +84,7 @@ class Circles extends React.Component {
                       cy={cy}
                       r={
                         this.props.data[parseInt(f.id).toString()]
-                          ? this.props.dataType == "cases"
+                          ? this.props.dataType === "cases"
                             ? this.countyCasesRadius(
                                 this.props.data[parseInt(f.id).toString()][
                                   this.props.dataType

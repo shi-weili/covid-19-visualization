@@ -63,11 +63,11 @@ class DataMap extends React.Component {
 
   updateState() {
     this.currentTopology =
-      this.props.dataScale == "states" ? statesTopology : countiesTopology;
+      this.props.dataScale === "states" ? statesTopology : countiesTopology;
     this.currentData =
-      this.props.dataScale == "states" ? latestStatesData : latestCountiesData;
+      this.props.dataScale === "states" ? latestStatesData : latestCountiesData;
     this.currentStateFillColor =
-      this.props.dataType == "cases" ? stateCasesColor : stateDeathsColor;
+      this.props.dataType === "cases" ? stateCasesColor : stateDeathsColor;
   }
 
   render() {
@@ -124,7 +124,7 @@ class DataMap extends React.Component {
                           if (
                             this.currentData[parseInt(f.id).toString()][
                               this.props.dataType
-                            ] == 0
+                            ] === 0
                           ) {
                             return;
                           }
