@@ -19,13 +19,13 @@ class SnapshotControls extends React.Component {
             <Col md={{ span: 3, offset: 3 }}>
               <span className="control-title">Data Scale</span>
               <ToggleButtonGroup
+                className="control-toggle-group"
                 type="radio"
                 name="topology"
                 defaultValue={"states"}
                 onChange={(value) => {
                   this.props.onDataScaleChange(value);
                 }}
-                style={{ paddingLeft: 10 }}
               >
                 <ToggleButton value={"states"} variant="light">
                   States
@@ -39,13 +39,13 @@ class SnapshotControls extends React.Component {
             <Col md={{ span: 3 }}>
               <span className="control-title">Data Sype</span>
               <ToggleButtonGroup
+                className="control-toggle-group"
                 type="radio"
                 name="data-type"
                 defaultValue={"cases"}
                 onChange={(value) => {
                   this.props.onDataTypeChange(value);
                 }}
-                style={{ paddingLeft: 10 }}
               >
                 <ToggleButton value={"cases"} variant="light">
                   Cases
