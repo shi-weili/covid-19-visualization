@@ -6,6 +6,7 @@ import { withTooltip, TooltipWithBounds } from "@vx/tooltip";
 import { scaleSqrt } from "@vx/scale";
 import Circles from "./Circles";
 import StateBoundaries from "./StateBoundaries";
+import { Container, Row, Col } from "react-bootstrap";
 
 // Topology
 const topology = require("../Assets/counties-simplified.json"); // Processed with toposimplify; added NYC with fips=-1
@@ -180,6 +181,13 @@ class DataMap extends React.Component {
         </svg>
 
         {/* Exact numbers as tooltip */}
+        <Container>
+          <Col md={{ span: 9, offset: 1 }}>
+            <p className="tooltip-hint">
+              Hover mouse on the map to show numbers.
+            </p>
+          </Col>
+        </Container>
         {this.props.tooltipOpen && (
           <TooltipWithBounds
             // set this to random so it correctly updates with parent bounds
