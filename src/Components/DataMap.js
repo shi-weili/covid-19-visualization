@@ -184,7 +184,7 @@ class DataMap extends React.Component {
         <Container>
           <Col md={{ span: 9, offset: 1 }}>
             <p className="tooltip-hint">
-              Hover mouse on the map to show numbers.
+              Hover mouse over the map to show numbers.
             </p>
           </Col>
         </Container>
