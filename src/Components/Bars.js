@@ -139,7 +139,7 @@ class Bars extends React.Component {
               return (
                 <Bar
                   key={`bar-${i}`}
-                  x={barX(i) + barGap / 2}
+                  x={barX(i)}
                   y={barY}
                   width={barWidth}
                   height={barHeight}
