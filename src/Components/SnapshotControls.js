@@ -17,7 +17,7 @@ class SnapshotControls extends React.Component {
         <Container>
           <Row>
             <Col md={{ span: 3, offset: 3 }}>
-              Data Scale
+              <span className="control-title">Data Scale</span>
               <ToggleButtonGroup
                 type="radio"
                 name="topology"
@@ -27,12 +27,17 @@ class SnapshotControls extends React.Component {
                 }}
                 style={{ paddingLeft: 10 }}
               >
-                <ToggleButton value={"states"}>States</ToggleButton>
-                <ToggleButton value={"counties"}>Counties</ToggleButton>
+                <ToggleButton value={"states"} variant="light">
+                  States
+                </ToggleButton>
+                <ToggleButton value={"counties"} variant="light">
+                  Counties
+                </ToggleButton>
               </ToggleButtonGroup>
             </Col>
+
             <Col md={{ span: 3 }}>
-              Data Sype
+              <span className="control-title">Data Sype</span>
               <ToggleButtonGroup
                 type="radio"
                 name="data-type"
@@ -42,8 +47,12 @@ class SnapshotControls extends React.Component {
                 }}
                 style={{ paddingLeft: 10 }}
               >
-                <ToggleButton value={"cases"}>Cases</ToggleButton>
-                <ToggleButton value={"deaths"}>Deaths</ToggleButton>
+                <ToggleButton value={"cases"} variant="light">
+                  Cases
+                </ToggleButton>
+                <ToggleButton value={"deaths"} variant="light">
+                  Deaths
+                </ToggleButton>
               </ToggleButtonGroup>
             </Col>
           </Row>
