@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Bar } from "@vx/shape";
+import { Text } from "@vx/text";
 import { Group } from "@vx/group";
 import { scaleLinear, scaleSqrt } from "@vx/scale";
 
@@ -34,8 +35,8 @@ const latestCountiesDeaths = data["counties_snapshots"]["deaths"][
 const width = 900;
 const height = 180;
 
-const barWidth = (width / numBars) * 0.6;
-const barGap = (width / numBars) * 0.4;
+const barWidth = (width / numBars) * 0.5;
+const barGap = (width / numBars) * 0.5;
 
 const x = (d) => d["area_name"];
 const y = (d) => d["number"];
@@ -137,14 +138,25 @@ class Bars extends React.Component {
               const barHeight = this.currentYScale(y(d));
               const barY = height - barHeight;
               return (
-                <Bar
-                  key={`bar-${i}`}
-                  x={barX(i)}
-                  y={barY}
-                  width={barWidth}
-                  height={barHeight}
-                  fill={this.currentColor(y(d))}
-                />
+                <React.Fragment>
+                  <Bar
+                    key={`bar-${i}`}
+                    x={barX(i)}
+                    y={barY}
+                    width={barWidth}
+                    height={barHeight}
+                    fill={this.currentColor(y(d))}
+                  />
+                  <Text
+                    className="bar-text"
+                    x={barX(i) + barWidth * 1.4}
+                    y={height}
+                    textAnchor="start"
+                    angle={-90}
+                  >
+                    {x(d) + ": " + y(d) + " " + this.props.dataType}
+                  </Text>
+                </React.Fragment>
               );
             })}
           </Group>
