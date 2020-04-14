@@ -1,6 +1,7 @@
 import React from "react";
 import SnapshotControls from "./SnapshotControls";
 import DataMap from "./DataMap";
+import Bars from "./Bars";
 
 class Snapshot extends React.Component {
   // State
@@ -33,6 +34,7 @@ class Snapshot extends React.Component {
           dataScale={this.state.dataScale}
           dataType={this.state.dataType}
         />
+        <Bars dataScale={this.state.dataScale} dataType={this.state.dataType} />
       </React.Fragment>
     );
   }

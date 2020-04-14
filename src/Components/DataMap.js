@@ -14,7 +14,7 @@ const statesTopology = topojson.feature(topology, topology.objects.states);
 const countiesTopology = topojson.feature(topology, topology.objects.counties);
 
 // Data
-const data = require("../Assets/data.json");
+const data = require("../Assets/data-for-map.json");
 
 const maxStateCases = data["max_state_cases"];
 const maxStateDeaths = data["max_state_deaths"];
@@ -80,9 +80,8 @@ class DataMap extends React.Component {
     return (
       <React.Fragment>
         {/* Map */}
-
         <svg className="data-map-canvas" width={mapWidth} height={mapHeight}>
-          {/* States or counties shapes */}
+          {/* State or county shapes */}
           <AlbersUsa
             data={this.currentTopology.features} // Not to be confused with our COVID-19 data. This is actually topology.
             scale={mapScale}
@@ -101,6 +100,7 @@ class DataMap extends React.Component {
                         key={`map-feature-${i}`}
                         d={data.path(f)}
                         fill={
+                          // Use color to represent states data, but not counties data
                           this.currentTopology === statesTopology &&
                           this.currentData[parseInt(f.id).toString()]
                             ? this.currentStateFillColor(
@@ -179,7 +179,7 @@ class DataMap extends React.Component {
           )}
         </svg>
 
-        {/* Details tooltip */}
+        {/* Exact numbers as tooltip */}
         {this.props.tooltipOpen && (
           <TooltipWithBounds
             // set this to random so it correctly updates with parent bounds

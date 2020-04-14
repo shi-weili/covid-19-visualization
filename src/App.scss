@@ -6,7 +6,19 @@ h1 {
   padding-bottom: 0.5em;
 }
 
+h2 {
+  text-transform: capitalize;
+  text-align: center;
+  padding-top: 1em;
+  padding-bottom: 0.5em;
+}
+
 .data-map-canvas {
+  display: block;
+  margin: auto;
+}
+
+.bars-canvas {
   display: block;
   margin: auto;
 }
