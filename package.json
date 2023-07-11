@@ -16,11 +16,11 @@
     "@vx/text": "0.0.195",
     "@vx/tooltip": "0.0.195",
     "bootstrap": "^4.4.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^9.0.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
+    "react-scripts": "5.0.1",
     "topojson-client": "^3.1.0",
     "topojson-simplify": "^3.0.3",
     "us-atlas": "^3.0.0"
